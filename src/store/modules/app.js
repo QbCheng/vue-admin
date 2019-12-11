@@ -2,6 +2,7 @@ import Cookies from 'js-cookie'
 
 const state = {
   sidebar: {
+    //  !!+'0' false   !!'0' true
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
     withoutAnimation: false
   },

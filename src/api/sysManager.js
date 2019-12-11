@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 
-export function getUserRoleList(query) {
+// 用户管理api
+export function getUserList(data) {
   return request({
-    url: '/article/list',
-    method: 'get',
-    params: query
+    url: '/user/list',
+    method: 'post',
+    data
   })
 }

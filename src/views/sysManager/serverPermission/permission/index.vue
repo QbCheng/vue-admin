@@ -48,7 +48,8 @@ export default {
   data() {
     return {
       tableData: null,
-      tableLoading: true
+      tableLoading: true,
+      multipleSelection: [] // 保存选择项
     }
   },
   methods: {
@@ -58,7 +59,9 @@ export default {
         this.tableLoading = false
       })
     },
-    handleSelectionChange() {
+    // selection-change	当选择项发生变化时会触发该事件(包括全选)
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     }
   }
 }

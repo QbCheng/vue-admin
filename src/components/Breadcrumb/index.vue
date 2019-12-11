@@ -23,17 +23,19 @@ export default {
       this.getBreadcrumb()
     }
   },
+  // 钩子函数
   created() {
     this.getBreadcrumb()
   },
   methods: {
     getBreadcrumb() {
       // only show routes with meta.title
+      console.log(this.$route.matched)
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
       const first = matched[0]
 
       if (!this.isDashboard(first)) {
-        matched = [{ path: '/dashboard', meta: { title: 'Dashboard' }}].concat(matched)
+        matched = [{ path: '/', meta: { title: 'HOME' }}].concat(matched)
       }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
@@ -66,7 +68,7 @@ export default {
 <style lang="scss" scoped>
 .app-breadcrumb.el-breadcrumb {
   display: inline-block;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 50px;
   margin-left: 8px;
 

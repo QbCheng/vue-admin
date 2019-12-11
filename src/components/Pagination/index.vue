@@ -69,6 +69,7 @@ export default {
         return this.limit
       },
       set(val) {
+        // update:*** 是用来配合父组件使用.sync修饰符
         this.$emit('update:limit', val)
       }
     }
@@ -93,7 +94,7 @@ export default {
 <style scoped>
 .pagination-container {
   background: #fff;
-  padding: 32px 16px;
+  padding: 16px 8px;
 }
 .pagination-container.hidden {
   display: none;
