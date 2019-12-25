@@ -10,7 +10,7 @@
         创建
       </el-button>
       <el-popconfirm
-        title="确定批量删除吗?"
+        title="确定批量删除用户?"
         @onConfirm="delMuitlData"
       >
         <el-button slot="reference" class="filter-item" style="margin-left: 10px;" icon="el-icon-edit" type="primary"> 批量删除 </el-button>
@@ -34,16 +34,25 @@
       <el-table-column prop="avatar" label="头像地址" width="300px" />
       <el-table-column prop="introduction" label="用户简介" />
 
-      <el-table-column fixed="right" label="操作" width="100px">
+      <el-table-column fixed="right" label="操作" width="180px">
         <!-- --TODO: scope 是保存el-table数据的行内数据结构 -->
         <template v-slot="{row}">
-          <el-button type="text" size="small" @click="handleUpdate(row)">编辑</el-button>
-          <el-popconfirm
-            title="确定批量删除吗?"
-            @onConfirm="handleDelete(row)"
-          >
-            <el-button slot="reference" type="text" size="small">删除</el-button>
-          </el-popconfirm>
+          <el-row>
+            <el-col :span="8">
+              <el-button type="text" size="small" @click="handleUpdate(row)">编辑</el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-button type="text" size="small" @click="handleAllocatePermission(row)">分配</el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-popconfirm
+                title="确定删除该用户?"
+                @onConfirm="handleDelete(row)"
+              >
+                <el-button slot="reference" type="text" size="small">删除</el-button>
+              </el-popconfirm>
+            </el-col>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>
@@ -79,6 +88,8 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <AllocateDialog :optid.sync="dialogAllocateId" :show.sync="dialogAllocateVisible" />
   </div>
 </template>
 
@@ -87,9 +98,11 @@ import { getUserList, updateUser, deleteUser, createUser } from '@/api/sysManage
 import { parseTime } from '@/utils'
 
 import Pagination from '@/components/Pagination' // 分页组件
+import AllocateDialog from '@/views/sysManager/serverUser/components/AllocateDialog' // 分页组件
 export default {
   components: {
-    Pagination
+    Pagination,
+    AllocateDialog
   },
   data() {
     return {
@@ -107,6 +120,9 @@ export default {
         account: '',
         name: ''
       },
+
+      dialogAllocateVisible: false,
+      dialogAllocateId: 0,
 
       // 创建 和 编辑 对话框
       dialogFormVisible: false,
@@ -174,6 +190,13 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+    },
+
+    // 弹出分配权限界面
+    handleAllocatePermission(row) {
+      this.dialogAllocateVisible = true
+      this.dialogAllocateId = row.id
+      console.log(row)
     },
 
     // 单独删除用户

@@ -11,7 +11,7 @@
       </el-button>
       <el-popconfirm
         title="确定批量删除这些角色?"
-        @onConfirm="delMuitlData"
+        @onConfirm="deleteData"
       >
         <el-button slot="reference" class="filter-item" style="margin-left: 10px;" icon="el-icon-edit" type="primary"> 批量删除 </el-button>
       </el-popconfirm>
@@ -24,23 +24,32 @@
       highlight-current-row
       style="width: 100%"
       border
-      @selection-change="handleSelectionChange"
+      @selection-change="selectionChangeCallback"
     >
-      <el-table-column type="selection" width="40px" />
-      <el-table-column prop="id" label="角色索引" width="100px" />
-      <el-table-column prop="name" label="角色名" width="100px" />
-      <el-table-column prop="createdAt" label="创建时间" width="180px" :formatter="formatterDate" />
-      <el-table-column prop="updatedAt" label="更新时间" width="180px" :formatter="formatterDate" />
-      <el-table-column fixed="right" label="操作">
+      <el-table-column type="selection" width="50px" />
+      <el-table-column prop="id" label="角色索引" />
+      <el-table-column prop="name" label="角色名" />
+      <el-table-column prop="createdAt" label="创建时间" :formatter="formatterDate" />
+      <el-table-column prop="updatedAt" label="更新时间" :formatter="formatterDate" />
+      <el-table-column fixed="right" width="120px" label="操作">
         <!-- --TODO: scope 是保存el-table数据的行内数据结构 -->
         <template v-slot="{row}">
-          <el-button type="text" size="small" @click="handleUpdate(row)">编辑</el-button>
-          <el-popconfirm
-            title="确定删除该角色?"
-            @onConfirm="handleDelete(row)"
-          >
-            <el-button slot="reference" type="text" size="small">删除</el-button>
-          </el-popconfirm>
+          <el-row>
+            <el-col :span="8">
+              <el-button type="text" size="small" @click="handleUpdate(row)">编辑</el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-button type="text" size="small" @click="handleAllocatePermission(row)">分配</el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-popconfirm
+                title="确定删除该角色?"
+                @onConfirm="deleteDatum(row)"
+              >
+                <el-button slot="reference" type="text" size="small">删除</el-button>
+              </el-popconfirm>
+            </el-col>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>
@@ -64,6 +73,8 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <AllocateDialog :optid.sync="dialogAllocateId" :show.sync="dialogAllocateVisible" />
   </div>
 </template>
 
@@ -72,9 +83,12 @@ import { getRoleList, updateRole, delRole, createRole } from '@/api/sysManager'
 import { parseTime } from '@/utils'
 
 import Pagination from '@/components/Pagination' // 分页组件
+import AllocateDialog from '@/views/sysManager/serverPermission/role/components/AllocateDialog' // 分页组件
+
 export default {
   components: {
-    Pagination
+    Pagination,
+    AllocateDialog
   },
   data() {
     return {
@@ -95,6 +109,10 @@ export default {
 
       // 创建 和 编辑 对话框
       dialogFormVisible: false,
+
+      // 分配权限对话框
+      dialogAllocateVisible: false,
+      dialogAllocateId: 0,
 
       fromDialogStatus: '',
       textMap: {
@@ -147,22 +165,13 @@ export default {
       this.fetchData()
     },
 
-    // 对话框弹出
+    // 弹出更新界面
     handleUpdate(row) {
       this.fromTempData = Object.assign({}, row) // copy obj
       this.fromDialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
-      })
-    },
-
-    // 单独删除用户
-    handleDelete(row) {
-      const { id } = row
-      console.log('handleDelete')
-      delRole({ id: [id] }).then(response => {
-        this.fetchData()
       })
     },
 
@@ -181,28 +190,24 @@ export default {
       })
     },
 
-    handleSelectionChange(val) {
+    // 弹出分配权限界面
+    handleAllocatePermission(row) {
+      this.dialogAllocateVisible = true
+      this.dialogAllocateId = row.id
+      console.log(row)
+    },
+
+    /**
+     * Selection 发送改变的回调函数
+    */
+    selectionChangeCallback(val) {
       this.multipleSelection = val
     },
 
-    // 创建用户数据
+    // 创建数据
     createData() {
       createRole(this.fromTempData).then(response => {
         this.dialogFormVisible = false
-        this.fetchData()
-      })
-    },
-
-    // 批量删除
-    delMuitlData() {
-      const parameter = []
-      if (!this.multipleSelection || this.multipleSelection.length === 0) {
-        return
-      }
-      this.multipleSelection.forEach(Element => {
-        parameter.push(Element.id)
-      })
-      delRole({ id: parameter }).then(response => {
         this.fetchData()
       })
     },
@@ -211,6 +216,28 @@ export default {
     updateData() {
       updateRole(this.fromTempData).then(response => {
         this.dialogFormVisible = false
+        this.fetchData()
+      })
+    },
+
+    // 单独删除用户
+    deleteDatum(row) {
+      const { id } = row
+      delRole({ id: [id] }).then(response => {
+        this.fetchData()
+      })
+    },
+
+    // 批量删除
+    deleteData() {
+      const parameter = []
+      if (!this.multipleSelection || this.multipleSelection.length === 0) {
+        return
+      }
+      this.multipleSelection.forEach(Element => {
+        parameter.push(Element.id)
+      })
+      delRole({ id: parameter }).then(response => {
         this.fetchData()
       })
     },

@@ -36,6 +36,60 @@ export function createUser(data) {
   })
 }
 
+// 用户拥有的权限
+export function userHasPermission(data) {
+  return request({
+    url: '/rbac/userHasPermission',
+    method: 'post',
+    data
+  })
+}
+
+// 用户拥有的角色
+export function userHasRole(data) {
+  return request({
+    url: '/rbac/userHasRole',
+    method: 'post',
+    data
+  })
+}
+
+// 用户拥有的所有权限
+export function userHasAllPermission(data) {
+  return request({
+    url: '/rbac/userHasAllPermission',
+    method: 'post',
+    data
+  })
+}
+
+// 给用户挂载权
+export function userAssignPermission(data) {
+  return request({
+    url: '/rbac/userAssignPermission',
+    method: 'post',
+    data
+  })
+}
+
+// 给用户挂载角色
+export function userAssignRole(data) {
+  return request({
+    url: '/rbac/userAssignRole',
+    method: 'post',
+    data
+  })
+}
+
+// 给用户卸载角色
+export function userUnassignRole(data) {
+  return request({
+    url: '/rbac/userUnassignRole',
+    method: 'post',
+    data
+  })
+}
+
 // ---------------------------------- rbac 权限--------------------
 // 获取列表
 export function getPermissionList(data) {
@@ -109,3 +163,31 @@ export function createRole(data) {
     data
   })
 }
+
+// 角色装载权限
+export function roleAssignPermission(data) {
+  return request({
+    url: '/rbac/roleAssignPermission',
+    method: 'post',
+    data
+  })
+}
+
+// 角色卸载权限
+export function roleUnassignPermission(data) {
+  return request({
+    url: '/rbac/roleUnassignPermission',
+    method: 'post',
+    data
+  })
+}
+
+// 角色拥有的权限
+export function roleHasPermission(data) {
+  return request({
+    url: '/rbac/roleHasPermission',
+    method: 'post',
+    data
+  })
+}
+
